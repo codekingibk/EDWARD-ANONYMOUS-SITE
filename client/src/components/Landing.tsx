@@ -28,6 +28,12 @@ export function Landing() {
           </Link>
         </div>
         
+        <div className="text-center mb-8">
+          <p className="text-sm text-muted-foreground">
+            Admin access: Use credentials Adegboyega / ibukun to access admin dashboard
+          </p>
+        </div>
+        
 
       </section>
       

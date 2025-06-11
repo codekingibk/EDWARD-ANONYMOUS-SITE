@@ -74,6 +74,16 @@ export function Navigation({ onOpenAuth }: NavigationProps) {
                   </AvatarFallback>
                 </Avatar>
                 <span className="font-medium">{user.username}</span>
+                {user.isAdmin && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.location.reload()}
+                    className="text-xs"
+                  >
+                    Admin
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
