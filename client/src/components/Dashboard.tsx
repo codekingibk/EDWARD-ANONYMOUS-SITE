@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useWebSocket } from "@/hooks/use-websocket";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,25 +8,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Share2, ChartLine, Inbox, MessageCircle, Copy, Trash2, Flag, Send, RefreshCw, Users } from "lucide-react";
+import { Share2, Inbox, Copy, Trash2, Flag, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [chatInput, setChatInput] = useState("");
-  const { isConnected, onlineUsers, messages: chatMessages, sendMessage } = useWebSocket();
 
   // Fetch user messages
   const { data: messagesData, isLoading: messagesLoading } = useQuery({
     queryKey: ['/api/messages'],
-    enabled: !!user,
-  });
-
-  // Fetch chat messages
-  const { data: initialChatMessages } = useQuery({
-    queryKey: ['/api/chat/messages'],
     enabled: !!user,
   });
 
@@ -102,19 +92,6 @@ export function Dashboard() {
     }
   };
 
-  const handleSendChatMessage = () => {
-    if (chatInput.trim()) {
-      sendMessage(chatInput);
-      setChatInput("");
-    }
-  };
-
-  const handleChatKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendChatMessage();
-    }
-  };
-
   if (!user) return null;
 
   const messages = (messagesData as any)?.messages || [];
@@ -136,19 +113,14 @@ export function Dashboard() {
                 Welcome back, <span className="gradient-text">{user.username}</span>
               </h2>
               <p className="text-muted-foreground">
-                Member since {formatDistanceToNow(new Date(user.createdAt || ''), { addSuffix: true })}
+                Share your link to start receiving anonymous messages
               </p>
-              <div className="flex items-center justify-center md:justify-start mt-2">
-                <span className="text-sm text-muted-foreground">Status:</span>
-                <span className="status-indicator status-online ml-2"></span>
-                <span className="text-sm text-green-600 ml-1">Online</span>
-              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Link Sharing and Stats */}
+      {/* Link Sharing */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <Card className="glass-card">
           <CardHeader>
@@ -194,23 +166,21 @@ export function Dashboard() {
         <Card className="glass-card">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <ChartLine className="mr-3 h-5 w-5 text-primary" />
-              Your Activity
+              <Inbox className="mr-3 h-5 w-5 text-primary" />
+              Message Count
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">{messages.length}</div>
-                <div className="text-sm text-muted-foreground">Anonymous Messages Received</div>
-              </div>
+            <div className="text-center p-4 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary mb-1">{messages.length}</div>
+              <div className="text-sm text-muted-foreground">Anonymous Messages Received</div>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Messages Inbox */}
-      <Card className="glass-card mb-8">
+      <Card className="glass-card">
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center">
@@ -234,7 +204,11 @@ export function Dashboard() {
             {messagesLoading ? (
               <div className="text-center text-muted-foreground">Loading messages...</div>
             ) : messages.length === 0 ? (
-              <div className="text-center text-muted-foreground">No messages yet. Share your link to start receiving anonymous messages!</div>
+              <div className="text-center text-muted-foreground py-8">
+                <div className="text-4xl mb-4">📬</div>
+                <h3 className="text-lg font-semibold mb-2">No messages yet</h3>
+                <p className="text-sm">Share your link above to start receiving anonymous messages!</p>
+              </div>
             ) : (
               <div className="space-y-4">
                 {messages.map((message: any) => (
@@ -283,8 +257,6 @@ export function Dashboard() {
           </ScrollArea>
         </CardContent>
       </Card>
-
-
     </div>
   );
 }
