@@ -3,12 +3,18 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/components/ui/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sun, Moon, VenetianMask, LogOut } from "lucide-react";
+import { Sun, Moon, VenetianMask, LogOut, Menu } from "lucide-react";
+import { useState } from "react";
 
-export function Navigation() {
+interface NavigationProps {
+  onOpenAuth: (mode: 'login' | 'register') => void;
+}
+
+export function Navigation({ onOpenAuth }: NavigationProps) {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [location] = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -79,12 +85,12 @@ export function Navigation() {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Link href="/login">
-                  <Button variant="ghost">Sign In</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Get Started</Button>
-                </Link>
+                <Button variant="ghost" onClick={() => onOpenAuth('login')}>
+                  Sign In
+                </Button>
+                <Button onClick={() => onOpenAuth('register')}>
+                  Get Started
+                </Button>
               </div>
             )}
           </div>

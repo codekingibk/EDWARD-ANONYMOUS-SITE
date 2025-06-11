@@ -121,7 +121,7 @@ export function Dashboard() {
       </Card>
 
       {/* Link Sharing */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <Card className="glass-card">
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -140,7 +140,7 @@ export function Dashboard() {
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
               <Button 
                 onClick={() => shareToSocial('twitter')} 
                 className="flex-1 bg-blue-600 hover:bg-blue-700"

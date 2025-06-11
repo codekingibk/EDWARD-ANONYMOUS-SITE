@@ -4,10 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Navigation } from "@/components/Navigation";
 import { AuthModal } from "@/components/AuthModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Home from "@/pages/home";
 import UserProfile from "@/pages/user-profile";
 import NotFound from "@/pages/not-found";
@@ -15,25 +15,40 @@ import NotFound from "@/pages/not-found";
 function Router() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const { user } = useAuth();
+
+  // Close modal when user successfully authenticates
+  useEffect(() => {
+    if (user && authModalOpen) {
+      setAuthModalOpen(false);
+    }
+  }, [user, authModalOpen]);
+
+  const openAuthModal = (mode: 'login' | 'register') => {
+    setAuthMode(mode);
+    setAuthModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Navigation onOpenAuth={openAuthModal} />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/u/:username" component={UserProfile} />
           <Route path="/login">
             {() => {
-              setAuthMode('login');
-              setAuthModalOpen(true);
+              if (!user) {
+                openAuthModal('login');
+              }
               return <Home />;
             }}
           </Route>
           <Route path="/register">
             {() => {
-              setAuthMode('register');
-              setAuthModalOpen(true);
+              if (!user) {
+                openAuthModal('register');
+              }
               return <Home />;
             }}
           </Route>

@@ -42,6 +42,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
             description: "Passwords do not match!",
             variant: "destructive",
           });
+          setIsLoading(false);
           return;
         }
         await register(username, email, password);
@@ -50,8 +51,10 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
           description: `Account created successfully! Welcome, ${username}!`,
         });
       }
-      onClose();
+      
+      // Close modal and reset form after successful auth
       resetForm();
+      onClose();
     } catch (error: any) {
       toast({
         title: "Error",

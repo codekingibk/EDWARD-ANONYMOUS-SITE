@@ -8,8 +8,8 @@ import session from "express-session";
 import { z } from "zod";
 
 const ADMIN_CREDENTIALS = {
-  username: 'edwards_admin_2025',
-  password: 'SecureAdmin!2025#EdwardsAnon'
+  username: 'Adegboyega',
+  password: 'ibukun'
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
