@@ -117,9 +117,8 @@ export function Dashboard() {
 
   if (!user) return null;
 
-  const messages = messagesData?.messages || [];
+  const messages = (messagesData as any)?.messages || [];
   const unreadCount = messages.filter((msg: any) => !msg.isRead).length;
-  const allChatMessages = [...(initialChatMessages?.messages || []), ...chatMessages];
 
   return (
     <div className="min-h-screen py-8">
@@ -196,26 +195,14 @@ export function Dashboard() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <ChartLine className="mr-3 h-5 w-5 text-primary" />
-              Your Statistics
+              Your Activity
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="text-center p-4 bg-muted rounded-lg">
                 <div className="text-2xl font-bold text-primary mb-1">{messages.length}</div>
-                <div className="text-sm text-muted-foreground">Messages Received</div>
-              </div>
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">0</div>
-                <div className="text-sm text-muted-foreground">Link Shares</div>
-              </div>
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">{chatMessages.length}</div>
-                <div className="text-sm text-muted-foreground">Chat Messages</div>
-              </div>
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold text-primary mb-1">0</div>
-                <div className="text-sm text-muted-foreground">Profile Views</div>
+                <div className="text-sm text-muted-foreground">Anonymous Messages Received</div>
               </div>
             </div>
           </CardContent>
@@ -297,70 +284,7 @@ export function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Community Chat */}
-      <Card className="glass-card">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center">
-              <MessageCircle className="mr-3 h-5 w-5 text-primary" />
-              Community Chat
-              <Badge className="ml-2 bg-green-500 animate-pulse">Live</Badge>
-            </CardTitle>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="mr-2 h-4 w-4" />
-              <span>{onlineUsers} online</span>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-96 mb-4 p-4 bg-muted rounded-xl message-scroll">
-            {allChatMessages.length === 0 ? (
-              <div className="text-center text-muted-foreground">No messages yet. Be the first to say hello!</div>
-            ) : (
-              <div className="space-y-4">
-                {allChatMessages.map((message: any, index) => (
-                  <div key={message.id || index} className="flex items-start space-x-3 animate-fade-in">
-                    <Avatar className="w-8 h-8 bg-primary">
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
-                        {message.initials || message.username?.substring(0, 2).toUpperCase() || 'A'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium text-primary">{message.username || 'Anonymous'}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {message.createdAt ? formatDistanceToNow(new Date(message.createdAt), { addSuffix: true }) : 'just now'}
-                        </span>
-                      </div>
-                      <p className="text-foreground">{message.content}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
-          
-          <div className="flex space-x-3">
-            <Input
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyPress={handleChatKeyPress}
-              placeholder="Type your anonymous message..."
-              className="flex-1"
-              disabled={!isConnected}
-            />
-            <Button 
-              onClick={handleSendChatMessage}
-              disabled={!isConnected || !chatInput.trim()}
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-          {!isConnected && (
-            <p className="text-sm text-muted-foreground mt-2">Connecting to chat...</p>
-          )}
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

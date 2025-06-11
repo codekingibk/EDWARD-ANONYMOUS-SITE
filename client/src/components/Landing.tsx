@@ -28,27 +28,7 @@ export function Landing() {
           </Link>
         </div>
         
-        {/* Live Stats Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
-          <Card className="glass-card hover:scale-105 transition-transform duration-200">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold gradient-text mb-2">12,847</div>
-              <div className="text-muted-foreground">Active Users</div>
-            </CardContent>
-          </Card>
-          <Card className="glass-card hover:scale-105 transition-transform duration-200">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold gradient-text mb-2">89,341</div>
-              <div className="text-muted-foreground">Messages Exchanged</div>
-            </CardContent>
-          </Card>
-          <Card className="glass-card hover:scale-105 transition-transform duration-200">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold gradient-text mb-2">2,156</div>
-              <div className="text-muted-foreground">Communities Formed</div>
-            </CardContent>
-          </Card>
-        </div>
+
       </section>
       
       {/* Features Showcase */}
