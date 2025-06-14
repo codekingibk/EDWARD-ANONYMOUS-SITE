@@ -23,11 +23,14 @@ export function SiteSettingsForm() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: async (data: { siteName: string; footerText: string; logoUrl?: string }) => {
-      return apiRequest({
-        url: '/api/admin/site-settings',
+      const res = await fetch('/api/admin/site-settings', {
         method: 'PUT',
-        body: data,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data),
       });
+      if (!res.ok) throw new Error('Failed to update settings');
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/site-settings'] });
