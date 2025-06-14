@@ -37,6 +37,14 @@ export const reports = pgTable("reports", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  siteName: text("site_name").notNull().default("My Site"),
+  footerText: text("footer_text").notNull().default("© 2024 My Site. All rights reserved."),
+  logoUrl: text("logo_url"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -61,6 +69,12 @@ export const insertReportSchema = createInsertSchema(reports).pick({
   reason: true,
 });
 
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).pick({
+  siteName: true,
+  footerText: true,
+  logoUrl: true,
+});
+
 export const loginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
@@ -74,3 +88,5 @@ export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertReport = z.infer<typeof insertReportSchema>;
 export type Report = typeof reports.$inferSelect;
+export type InsertSiteSettings = z.infer<typeof insertSiteSettingsSchema>;
+export type SiteSettings = typeof siteSettings.$inferSelect;

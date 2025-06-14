@@ -1,4 +1,4 @@
-import { users, messages, chatMessages, reports, type User, type InsertUser, type Message, type InsertMessage, type ChatMessage, type InsertChatMessage, type Report, type InsertReport } from "@shared/schema";
+import { users, messages, chatMessages, reports, siteSettings, type User, type InsertUser, type Message, type InsertMessage, type ChatMessage, type InsertChatMessage, type Report, type InsertReport, type SiteSettings, type InsertSiteSettings } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, count } from "drizzle-orm";
 
@@ -28,6 +28,11 @@ export interface IStorage {
 
   // Admin methods
   getAdminStats(): Promise<any>;
+
+  // Site settings methods
+  getSiteSettings(): Promise<SiteSettings | undefined>;
+  updateSiteSettings(settings: InsertSiteSettings): Promise<SiteSettings>;
+  getReportsWithDetails(): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -139,6 +144,52 @@ export class DatabaseStorage implements IStorage {
       activeUsers: totalUsers.count, // Simplified for now
       totalMessages: totalMessages.count + totalChatMessages.count,
     };
+  }
+
+  async getSiteSettings(): Promise<SiteSettings | undefined> {
+    const [settings] = await db.select().from(siteSettings).limit(1);
+    return settings || undefined;
+  }
+
+  async updateSiteSettings(settings: InsertSiteSettings): Promise<SiteSettings> {
+    // First check if settings exist
+    const existing = await this.getSiteSettings();
+    
+    if (existing) {
+      const [updated] = await db
+        .update(siteSettings)
+        .set({ ...settings, updatedAt: new Date() })
+        .where(eq(siteSettings.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(siteSettings)
+        .values(settings)
+        .returning();
+      return created;
+    }
+  }
+
+  async getReportsWithDetails(): Promise<any[]> {
+    const reportsWithDetails = await db
+      .select({
+        id: reports.id,
+        reason: reports.reason,
+        status: reports.status,
+        createdAt: reports.createdAt,
+        reporterUsername: users.username,
+        reporterEmail: users.email,
+        messageContent: messages.content,
+        chatMessageContent: chatMessages.content,
+      })
+      .from(reports)
+      .leftJoin(users, eq(reports.reporterId, users.id))
+      .leftJoin(messages, eq(reports.messageId, messages.id))
+      .leftJoin(chatMessages, eq(reports.chatMessageId, chatMessages.id))
+      .orderBy(desc(reports.createdAt));
+    
+    return reportsWithDetails;
   }
 }
 
