@@ -79,7 +79,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalP
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md glass-card max-w-[95vw] mx-4">
         <DialogHeader>
           <DialogTitle className="text-center">

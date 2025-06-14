@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { SiteSettingsProvider, useSiteSettings } from "@/hooks/use-site-settings";
 import { Navigation } from "@/components/Navigation";
 import { AuthModal } from "@/components/AuthModal";
 import { useState, useEffect } from "react";
@@ -16,6 +17,7 @@ function Router() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const { user } = useAuth();
+  const { settings } = useSiteSettings();
 
   // Close modal when user successfully authenticates
   useEffect(() => {
@@ -68,7 +70,7 @@ function Router() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <div className="text-2xl font-bold gradient-text mb-4 flex items-center">
-                Edwards Anonymous
+                {settings?.siteName || "Edwards Anonymous"}
               </div>
               <p className="text-muted-foreground mb-4 max-w-md">
                 Connecting people authentically through anonymous communication. Built for the modern world of 2025.
@@ -96,7 +98,7 @@ function Router() {
           <hr className="my-8 border-border" />
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">
-              © 2025 Edwards Anonymous. All rights reserved. Made with 💜 for authentic connections.
+              {settings?.footerText || "© 2025 Edwards Anonymous. All rights reserved. Made with 💜 for authentic connections."}
             </p>
             <div className="flex items-center mt-4 md:mt-0">
               <span className="status-indicator status-online mr-2"></span>
@@ -113,12 +115,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="edwards-anonymous-theme">
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </AuthProvider>
+        <SiteSettingsProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </AuthProvider>
+        </SiteSettingsProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
