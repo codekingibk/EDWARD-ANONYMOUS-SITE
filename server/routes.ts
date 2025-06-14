@@ -241,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/admin/reports', requireAdmin, async (req, res) => {
     try {
-      const reports = await storage.getAllReports();
+      const reports = await storage.getReportsWithDetails();
       res.json({ reports });
     } catch (error) {
       console.error('Get all reports error:', error);
@@ -269,6 +269,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Delete user error:', error);
       res.status(500).json({ message: 'Failed to delete user' });
+    }
+  });
+
+  // Site settings routes
+  app.get('/api/site-settings', async (req, res) => {
+    try {
+      const settings = await storage.getSiteSettings();
+      res.json({ settings });
+    } catch (error) {
+      console.error('Get site settings error:', error);
+      res.status(500).json({ message: 'Failed to get site settings' });
+    }
+  });
+
+  app.put('/api/admin/site-settings', requireAdmin, async (req, res) => {
+    try {
+      const settingsData = req.body;
+      const settings = await storage.updateSiteSettings(settingsData);
+      res.json({ settings });
+    } catch (error) {
+      console.error('Update site settings error:', error);
+      res.status(500).json({ message: 'Failed to update site settings' });
     }
   });
 
